@@ -1,10 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Research | Lloyd Izard</title>
-  <link rel="stylesheet" href="assets/style.css" />
+  <link rel="stylesheet" href="assets/style.css"/>
+  <style>
+    .pub-wrap { margin-top: 2rem; }
+    .pub-filter { margin: 1rem 0 1.5rem; display: flex; gap: .75rem; align-items: center; flex-wrap: wrap; }
+    .pub-filter input { padding: .4rem .6rem; border-radius: 8px; border: 1px solid #ddd; }
+    .muted { color: #777; }
+    .pub-section-title { margin-top: 2rem; font-size: 1.4rem; }
+    .year-block { margin-top: 1.5rem; }
+    .year-heading { font-weight: 700; margin: 0 0 .5rem; }
+    .pub-list { list-style: none; padding: 0; margin: 0; display: grid; gap: .75rem; }
+    .pub-item { padding: 1rem; border: 1px solid #e8e8e8; border-radius: 12px; }
+    .pub-title { font-weight: 600; }
+    .pub-meta { color: #555; }
+    .pub-venue { font-style: italic; }
+    .pub-actions { margin-top: .4rem; font-size: .95rem; }
+    .pub-actions a { text-decoration: none; border-bottom: 1px dashed; }
+  </style>
 </head>
 <body>
   <nav class="navbar">
@@ -23,10 +39,214 @@
       functional data analysis, and the coupling between physical and biological
       oceanographic processes.
     </p>
+
+    <div class="pub-wrap">
+      <div class="pub-filter">
+        <label for="yearFilter"><span class="muted">Filter by year</span></label>
+        <input id="yearFilter" type="number" placeholder="e.g., 2025"/>
+      </div>
+
+      <h2 class="pub-section-title">First-author papers</h2>
+      <div id="first-author-sections"></div>
+
+      <h2 class="pub-section-title">Co-authored papers</h2>
+      <div id="coauthor-sections"></div>
+    </div>
   </section>
 
   <footer>
     <p>© 2025 Lloyd Izard</p>
   </footer>
+
+  <template id="year-block-template">
+    <div class="year-block">
+      <h3 class="year-heading"></h3>
+      <ul class="pub-list"></ul>
+    </div>
+  </template>
+
+  <template id="pub-item-template">
+    <li class="pub-item">
+      <div class="pub-title"></div>
+      <div class="pub-meta"></div>
+      <div class="pub-actions"></div>
+    </li>
+  </template>
+
+  <script>
+    // ===== Your publications (from your message; unchanged in content) =====
+    const publications = [
+      {
+        authors: ["Cotté, C.", "Ariza, A.", "Berne, A.", "Habasque, J.", "Lebourges-Dhaussy, A.", "Roudaut, G.", "Espinasse, B.", "Hunt, B.P.V.", "Pakhomov, E.A.", "Henschke, N.", "Péron, C."],
+        title: "Macrozooplankton and micronekton diversity and associated carbon vertical patterns and fluxes under distinct productive conditions around the Kerguelen Islands",
+        venue: "Journal of Marine Systems",
+        year: 2022,
+        pages: "226, 103650",
+        url: ""
+      },
+      {
+        authors: ["Tzortzis, R.", "Doglioli, A.M.", "Barrillon, S.", "Petrenko, A.A.", "d'Ovidio, F.", "Izard, L.", "Thyssen, M.", "Pascual, A.", "Barceló-Llull, B.", "Cyr, F.", "Tedetti, M."],
+        title: "Impact of moderately energetic fine-scale dynamics on the phytoplankton community structure in the western Mediterranean Sea",
+        venue: "Biogeosciences",
+        year: 2021,
+        pages: "18(24), 6455–6477",
+        url: ""
+      },
+      {
+        authors: ["Fuchs, R.", "Thyssen, M.", "Creach, V.", "Dugenne, M.", "Izard, L.", "Latimier, M.", "Louchart, A.", "Marrec, P.", "Rijkeboer, M.", "Grégori, G.", "Pommeret, D."],
+        title: "Automatic recognition of flow cytometric phytoplankton functional groups using convolutional neural networks",
+        venue: "Limnology and Oceanography: Methods",
+        year: 2022,
+        pages: "20(7), 387–399",
+        url: ""
+      },
+      {
+        authors: ["Tzortzis, R.", "Doglioli, A.M.", "Messié, M.", "Barrillon, S.", "Petrenko, A.A.", "Izard, L.", "Zhao, Y.", "d'Ovidio, F.", "Dumas, F.", "Gregori, G."],
+        title: "The contrasted phytoplankton dynamics across a frontal system in the southwestern Mediterranean Sea",
+        venue: "Biogeosciences",
+        year: 2023,
+        pages: "20(16), 3491–3508",
+        url: ""
+      },
+      {
+        authors: ["Izard, L.", "Fonvieille, N.", "Merland, C.", "Koubbi, P.", "Nerini, D.", "Habasque, J.", "Lebourges-Dhaussy, A.", "Monaco, C.L.", "Roudaut, G.", "d’Ovidio, F.", "Charrassin, J.-B."],
+        title: "Decomposing acoustic signal reveals the pelagic response to a frontal system",
+        venue: "Journal of Marine Systems",
+        year: 2024,
+        pages: "243, 103951",
+        url: ""
+      },
+      {
+        authors: ["Garel, M.", "Izard, L.", "Vienne, M.", "Nerini, D.", "Ali, B.A.", "Tamburini, C.", "Martini, S."],
+        title: "A ready-to-use logistic Verhulst model implemented in R shiny to estimate growth parameters of microorganisms",
+        venue: "bioRxiv",
+        year: 2022,
+        pages: "2022-07",
+        url: ""
+      },
+      {
+        authors: ["Izard, L.", "Ariza, A.", "Fonvieille, N.", "Goberville, É.", "Djian, V.", "Kristiansen, A.M.", "Charrassin, J.-B.", "Cotté, C."],
+        title: "Large differences in the distribution of pelagic biomass as a result of sonar frequency choice",
+        venue: "Proceedings B",
+        year: 2025,
+        pages: "292(2047), 20242991",
+        url: ""
+      },
+      {
+        authors: ["Izard, L."],
+        title: "Structuration spatiale et variabilité des écosystèmes mésopélagiques dans l'Océan Indien Sud",
+        venue: "Doctoral dissertation, Sorbonne Université",
+        year: 2023,
+        pages: "",
+        url: ""
+      },
+      {
+        authors: ["Rolland, R.", "Bouruet-Aubertot, P.", "Cuypers, Y.", "Bosse, A.", "Petrenko, A.", "Maytie, T.", "Ponte, A.", "Barrillon, S.", "Berta, M.", "Mourre, B.", "Pascual, A.", "…", "Izard, L."],
+        title: "Near-inertial wave trapping inside a fine-scale anticyclonic eddy during the BioSWOT-Med 2023 cruise: turbulence and energy flux",
+        venue: "ESS Open Archive",
+        year: 2025,
+        pages: "",
+        url: ""
+      },
+      {
+        authors: ["Rousselet, L.", "d’Ovidio, F.", "Izard, L.", "Della Penna, A.", "Petrenko, A.", "Barrillon, S.", "Nencioli, F.", "Doglioli, A."],
+        title: "A Software Package for an Adaptive Satellite-based Sampling for Oceanographic cruises (SPASSOv2.0): tracking fine scale features for physical and biogeochemical studies",
+        venue: "Journal of Atmospheric and Oceanic Technology",
+        year: 2025,
+        pages: "",
+        url: ""
+      },
+      {
+        authors: ["Oms, L.", "Doglioli, A.", "Messié, M.", "d’Ovidio, F.", "Rousselet, L.", "Capet, X.", "Izard, L.", "Levy, M.", "Berta, M.", "Petrenko, A.", "Bellacicco, M."],
+        title: "“Living on the edge” Fine-scale observations reveal distinct frontal phytoplankton communities",
+        venue: "",
+        year: 2025,
+        pages: "",
+        url: ""
+      },
+      {
+        authors: ["Demol, M.", "Berta, M.", "Gomez Navarro, L.", "Izard, L.", "Ardhuin, F.", "Bellacicco, M.", "Centurioni, L.", "D'Ovidio, F.", "Diaz-Barroso, L.", "Doglioli, A.", "Dumas, F.", "…"],
+        title: "A Drifter Dataset for the Western Mediterranean Sea collected during the SWOT mission calibration and validation phase",
+        venue: "",
+        year: 2023,
+        pages: "",
+        url: ""
+      },
+    ];
+
+    // ===== Helpers =====
+    function isFirstAuthor(pub) {
+      const first = (pub.authors?.[0] || "").toLowerCase();
+      return first.includes("izzard") || (first.includes("lloyd") && first.includes("izard")) || first.startsWith("izard, l.");
+    }
+
+    function groupByYear(items) {
+      const byYear = {};
+      items.forEach(p => {
+        const y = p.year || "n/a";
+        byYear[y] ??= [];
+        byYear[y].push(p);
+      });
+      // Sort items in each year by title (stable); years desc
+      const years = Object.keys(byYear).sort((a,b) => Number(b)-Number(a));
+      years.forEach(y => byYear[y].sort((a,b) => (b.title || "").localeCompare(a.title || "")));
+      return { years, byYear };
+    }
+
+    function renderSection(containerId, pubs, filterYear) {
+      const container = document.getElementById(containerId);
+      const yearTmpl = document.getElementById("year-block-template");
+      const itemTmpl = document.getElementById("pub-item-template");
+      container.innerHTML = "";
+
+      const filtered = pubs.filter(p => !filterYear || String(p.year) === String(filterYear));
+      const { years, byYear } = groupByYear(filtered);
+
+      years.forEach(y => {
+        const yearBlock = yearTmpl.content.cloneNode(true);
+        yearBlock.querySelector(".year-heading").textContent = y;
+        const listEl = yearBlock.querySelector(".pub-list");
+
+        byYear[y].forEach(pub => {
+          const li = itemTmpl.content.cloneNode(true);
+          const titleEl = li.querySelector(".pub-title");
+          titleEl.textContent = pub.title;
+
+          const metaEl = li.querySelector(".pub-meta");
+          const authorsStr = (pub.authors || []).join(", ");
+          const venueStr = pub.venue ? ` · <span class="pub-venue">${pub.venue}</span>` : "";
+          const pagesStr = pub.pages ? `, ${pub.pages}` : "";
+          metaEl.innerHTML = `${authorsStr}${venueStr}${pagesStr}`;
+
+          const actsEl = li.querySelector(".pub-actions");
+          if (pub.url) {
+            actsEl.innerHTML = `<a href="${pub.url}" target="_blank" rel="noopener">View</a>`;
+          } else {
+            actsEl.textContent = ""; // nothing if no link
+          }
+          listEl.appendChild(li);
+        });
+
+        container.appendChild(yearBlock);
+      });
+
+      if (years.length === 0) {
+        container.innerHTML = `<p class="muted">No entries for ${filterYear}.</p>`;
+      }
+    }
+
+    function renderAll() {
+      const year = document.getElementById("yearFilter").value.trim();
+      const first = publications.filter(isFirstAuthor);
+      const coauth = publications.filter(p => !isFirstAuthor(p));
+
+      // Newest-first ordering for rendering within year groups handled in groupByYear
+      renderSection("first-author-sections", first, year);
+      renderSection("coauthor-sections", coauth, year);
+    }
+
+    document.getElementById("yearFilter").addEventListener("input", renderAll);
+    renderAll();
+  </script>
 </body>
 </html>
